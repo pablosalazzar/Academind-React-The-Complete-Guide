@@ -18,7 +18,7 @@ function App() {
 
 
   function handleInputChange(newValue, inputID) {
-    setUserInput(prevValue => ({ ...prevValue, [inputID]: newValue }))
+    setUserInput(prevValue => ({ ...prevValue, [inputID]: parseInt(newValue) }))
   }
 
   return (
