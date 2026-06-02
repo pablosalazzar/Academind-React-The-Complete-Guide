@@ -3,41 +3,53 @@ import ResultModal from "./ResultModal";
 
 export default function TimerChallenge({ title, targetTime }) {
 
-    const [timerStarted, setTimerStarted] = useState(false)
-    const [timerExpired, setTimerExpired] = useState(false)
+    const [timeRemaining, setTimeRemaining] = useState(targetTime * 1000) // want the time in miliseconds 
+
     const timerRef = useRef()
     const modalRef = useRef()
 
-    function handleStart() {
-        setTimerStarted(true)
-        timerRef.current = setTimeout(() => {
-            setTimerExpired(true)
-            modalRef.current.open()
-        }, targetTime * 1000);
+    const timeIsActive = timeRemaining > 0 && timeRemaining < targetTime *1000
 
+
+    // validation
+    if(timeRemaining <= 0){
+        // time expire
+        clearInterval(timerRef.current)
+        modalRef.current.open()
+    }
+
+    function handleReset(){
+        setTimeRemaining( targetTime * 1000)
+    }
+    
+
+    function handleStart() {
+        timerRef.current = setInterval(() => {
+            setTimeRemaining( prevVal => prevVal - 10)
+        }, 10);
     }
 
     function handleStop() {
-        clearTimeout(timerRef.current)
-        setTimerStarted(false)
+        modalRef.current.open()
+        clearInterval(timerRef.current)
+     
     }
 
     return (
         <>
-            <ResultModal result="lost" targetTime={targetTime} modalRef={modalRef}/>
+            <ResultModal onReset={handleReset} result="lost" targetTime={targetTime} modalRef={modalRef} remainingTime ={timeRemaining}/>
             <section className="challenge">
                 <h2>{title}</h2>
-                {timerExpired && <p>you lost!</p>}
                 <p className="challenge-time">
                     {targetTime} second{targetTime > 1 ? 's' : ''}
                 </p>
                 <p>
-                    <button onClick={timerStarted ? handleStop : handleStart}>
-                        {timerStarted ? 'Stop' : 'Start'} Challenge
+                    <button onClick={timeIsActive ? handleStop : handleStart}>
+                        {timeIsActive ? 'Stop' : 'Start'} Challenge
                     </button>
                 </p>
-                <p className={timerStarted ? 'active' : undefined}>
-                    {timerStarted ? 'Time is running...' : 'Timer inactive'}
+                <p className={timeIsActive ? 'active' : undefined}>
+                    {timeIsActive ? 'Time is running...' : 'Timer inactive'}
                 </p>
             </section>
         </>
