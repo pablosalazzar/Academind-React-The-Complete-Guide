@@ -1,16 +1,49 @@
+import { useState } from "react"
+import { useProjects } from "../context/ProjectsContext"
+
+
 export default function CreateProject() {
+
+  const [projectName, setProjectName] = useState("")
+  const [projectDescription, setProjectDescription] = useState("")
+  const {addProject} = useProjects()
+
+
+  function clearForm(){
+    setProjectDescription("")
+    setProjectName("")
+  }
+
+  function handleSaveProject( e ){
+    e.preventDefault()
+
+    // Verify that fiels are not empty 
+    addProject({
+      name: projectName,
+      description: projectDescription
+    })
+
+    // Save the data
+    // clena the inputs & show success message
+    clearForm()
+
+  }
+
+
   return (
     <div className="max-w-lg mx-auto mt-10 bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm">
       <h1 className="text-xl font-medium text-zinc-900 flex items-center gap-2 mb-6">
         📁 Create project
       </h1>
 
-      <form className="space-y-5">
+      <form className="space-y-5" onSubmit={handleSaveProject}>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="project-name" className="text-xs font-medium tracking-wide text-zinc-500 uppercase">
             Project name
           </label>
           <input
+            value={projectName}
+            onChange={e => setProjectName(e.target.value)}
             id="project-name"
             type="text"
             placeholder="e.g. Website redesign"
@@ -23,6 +56,8 @@ export default function CreateProject() {
             Description
           </label>
           <textarea
+            value={projectDescription}
+            onChange={e=> setProjectDescription(e.target.value)}
             id="description"
             rows={4}
             placeholder="What is this project about?"

@@ -3,17 +3,24 @@ import { useProjects } from '../context/ProjectsContext'
 import { useEffect, useState } from "react"
 
 export default function ViewProject() {
+
+  //Task state. TODO: move this variable to other state
+  const [task,setTask] = useState("")
+
   let { projectId } = useParams()
-  const { projects } = useProjects()
+  const { projects,addTaks } = useProjects()
 
-  const filterProjectproject = projects.find(currentProject => currentProject.id == projectId)
-  const [project, setProject] = useState(filterProjectproject)
+  const project = projects.find(currentProject => currentProject.id == projectId)
+  
 
-  useEffect(() => {
-    const filterProjectproject = projects.find(currentProject => currentProject.id == projectId)
-    setProject(filterProjectproject)
-  }, [projectId])
-
+  function handleAddTaks(){
+    // need to verify if field its empty 
+    // Store the new task ussing context
+    // Clear the input task 
+    addTaks( projectId ,task)
+    setTask("")
+    
+  }
 
   return (
     <div className="max-w-2xl mx-auto mt-10 space-y-6">
@@ -38,11 +45,13 @@ export default function ViewProject() {
         <h2 className="text-sm font-medium text-zinc-700 mb-4">Create task</h2>
         <div className="flex gap-3">
           <input
+            value={task}
+            onChange={e=> setTask(e.target.value)}
             type="text"
             placeholder="Task name"
             className="flex-1 bg-zinc-50 border border-zinc-200 rounded-lg px-4 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400 transition"
           />
-          <button className="px-5 py-2.5 text-sm font-medium text-indigo-100 bg-indigo-600 hover:bg-indigo-500 active:scale-95 rounded-lg transition whitespace-nowrap">
+          <button onClick={handleAddTaks} className="px-5 py-2.5 text-sm font-medium text-indigo-100 bg-indigo-600 hover:bg-indigo-500 active:scale-95 rounded-lg transition whitespace-nowrap">
             + Add task
           </button>
         </div>
