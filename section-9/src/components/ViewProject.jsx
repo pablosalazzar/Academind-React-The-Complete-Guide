@@ -1,4 +1,4 @@
-import { useParams } from "react-router"
+import { redirect, useParams } from "react-router"
 import { useProjects } from '../context/ProjectsContext'
 import { useEffect, useState } from "react"
 
@@ -6,24 +6,40 @@ export default function ViewProject() {
 
   //Task state. TODO: move this variable to other state
   const [task,setTask] = useState("")
+  
 
   let { projectId } = useParams()
-  const { projects,addTaks } = useProjects()
+  const { projects,addTaks, completeTaks,deleteTask,deleteProject } = useProjects()
 
   const project = projects.find(currentProject => currentProject.id == projectId)
   
 
   function handleAddTaks(){
-    // need to verify if field its empty 
-    // Store the new task ussing context
-    // Clear the input task 
+    //TODO:  need to verify if field its empty 
     addTaks( projectId ,task)
     setTask("")
     
   }
 
+  function handleTaskCompleted(taskId){
+      completeTaks(projectId,taskId)
+  }
+
+  function handleDeleteTask(taskId){
+    deleteTask(projectId,taskId)
+  }
+
+  function handleDeleteProject(){
+    const deleteResult = deleteProject(projectId)
+    if(deleteResult  === "success"){
+      // redirect to home or create project 
+      return redirect("/")   
+    }
+  }
+
   return (
-    <div className="max-w-2xl mx-auto mt-10 space-y-6">
+<>
+   {project && (    <div className="max-w-2xl mx-auto mt-10 space-y-6">
 
       {/* Header */}
       <div className="flex items-start justify-between">
@@ -32,7 +48,7 @@ export default function ViewProject() {
           <h1 className="text-2xl font-medium text-zinc-900">{project.name}</h1>
           <p className="text-sm text-zinc-500 mt-1">{project.description}</p>
         </div>
-        <button className="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 active:scale-95 transition">
+        <button onClick={handleDeleteProject} className="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 active:scale-95 transition">
           Delete project
         </button>
       </div>
@@ -69,10 +85,10 @@ export default function ViewProject() {
           {project.tasks.map(task => (
             <li key={task.id} className="flex items-center justify-between px-6 py-3.5 hover:bg-zinc-50 transition group">
               <div className="flex items-center gap-3">
-                <input type="checkbox" className="accent-indigo-600 w-4 h-4 rounded" />
+                <input type="checkbox" className="accent-indigo-600 w-4 h-4 rounded"  checked={task.completed} onChange={()=> handleTaskCompleted(task.id)}/>
                 <span className="text-sm text-zinc-800">{task.name}</span>
               </div>
-              <button className="text-xs text-zinc-400 hover:text-red-500 border border-transparent hover:border-red-200 hover:bg-red-50 px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition">
+              <button onClick={()=> handleDeleteTask(task.id)} className="text-xs text-zinc-400 hover:text-red-500 border border-transparent hover:border-red-200 hover:bg-red-50 px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition">
                 Remove
               </button>
             </li>
@@ -89,6 +105,9 @@ export default function ViewProject() {
 
       </div>
 
-    </div>
+    </div>)}
+</>
+ 
+
   )
 }

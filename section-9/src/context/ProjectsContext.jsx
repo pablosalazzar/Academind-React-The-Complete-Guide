@@ -17,6 +17,15 @@ export function ProjectsProvier({ children }) {
 
     }
 
+    function deleteProject(projectId){
+      // delete project with no verification of tasks: 
+      setProjects( prevValue => (
+        prevValue.filter( project => project.id != projectId)
+      ) )
+
+      return "success"
+    }
+
     function addProject(newProject) {
         const newProjectId = Date.now()
         setProjects(prevValue => [...prevValue, { id: newProjectId, ...newProject, tasks: [] }])
@@ -32,17 +41,57 @@ export function ProjectsProvier({ children }) {
 
                 return {
                     ...project,
-                    tasks: [...project.tasks, { id: Date.now(), name: newTask }]
+                    tasks: [...project.tasks, { id: Date.now(), name: newTask, completed:false }]
                 }
             })
         ))
+    }
+
+    function deleteTask(projectId, taskId){
+      // we can use the filter witth the delete
+      setProjects( prevValue => (
+        prevValue.map( project => {
+          if(project.id != projectId){
+            return project
+          }
+          
+          // get tasks 
+          const filterTasks = project.tasks.filter( task => (
+            task.id != taskId
+          ))
+
+          return {...project, tasks: filterTasks}
+
+        })
+      ))
+
+    }
+
+    function completeTaks(projectId, taskId){
+
+      setProjects( prevValue => (
+        prevValue.map( project => {
+          if(project.id != projectId){
+            return project
+          }
+          
+          const updatedTasks = project.tasks.map( task=> {
+            if(task.id != taskId){
+              return task
+            }
+            return {...task, completed: !task.completed}
+          })
+
+          return {...project, tasks: updatedTasks}
+        })
+      ))
     }
 
 
 
     return (
         <>
-            <ProjectsContext value={{ projects, addProject, addTaks }}>
+            <ProjectsContext value={{ projects, addProject, addTaks, completeTaks, deleteTask, deleteProject }}>
                 {children}
             </ProjectsContext>
         </>
