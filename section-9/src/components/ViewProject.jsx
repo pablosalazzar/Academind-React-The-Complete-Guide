@@ -1,4 +1,20 @@
+import { useParams } from "react-router"
+import { useProjects } from '../context/ProjectsContext'
+import { useEffect, useState } from "react"
+
 export default function ViewProject() {
+  let { projectId } = useParams()
+  const { projects } = useProjects()
+
+  const filterProjectproject = projects.find(currentProject => currentProject.id == projectId)
+  const [project, setProject] = useState(filterProjectproject)
+
+  useEffect(() => {
+    const filterProjectproject = projects.find(currentProject => currentProject.id == projectId)
+    setProject(filterProjectproject)
+  }, [projectId])
+
+
   return (
     <div className="max-w-2xl mx-auto mt-10 space-y-6">
 
@@ -6,8 +22,8 @@ export default function ViewProject() {
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-zinc-400 mb-1">Project</p>
-          <h1 className="text-2xl font-medium text-zinc-900">Project title</h1>
-          <p className="text-sm text-zinc-500 mt-1">Project description goes here</p>
+          <h1 className="text-2xl font-medium text-zinc-900">{project.name}</h1>
+          <p className="text-sm text-zinc-500 mt-1">{project.description}</p>
         </div>
         <button className="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 active:scale-95 transition">
           Delete project
@@ -40,31 +56,28 @@ export default function ViewProject() {
 
         <ul className="divide-y divide-zinc-100">
           {/* Task item — repeat this pattern */}
-          <li className="flex items-center justify-between px-6 py-3.5 hover:bg-zinc-50 transition group">
-            <div className="flex items-center gap-3">
-              <input type="checkbox" className="accent-indigo-600 w-4 h-4 rounded" />
-              <span className="text-sm text-zinc-800">Task name</span>
-            </div>
-            <button className="text-xs text-zinc-400 hover:text-red-500 border border-transparent hover:border-red-200 hover:bg-red-50 px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition">
-              Remove
-            </button>
-          </li>
-          <li className="flex items-center justify-between px-6 py-3.5 hover:bg-zinc-50 transition group">
-            <div className="flex items-center gap-3">
-              <input type="checkbox" className="accent-indigo-600 w-4 h-4 rounded" />
-              <span className="text-sm text-zinc-800">Another task</span>
-            </div>
-            <button className="text-xs text-zinc-400 hover:text-red-500 border border-transparent hover:border-red-200 hover:bg-red-50 px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition">
-              Remove
-            </button>
-          </li>
+
+          {project.tasks.map(task => (
+            <li key={task.id} className="flex items-center justify-between px-6 py-3.5 hover:bg-zinc-50 transition group">
+              <div className="flex items-center gap-3">
+                <input type="checkbox" className="accent-indigo-600 w-4 h-4 rounded" />
+                <span className="text-sm text-zinc-800">{task.name}</span>
+              </div>
+              <button className="text-xs text-zinc-400 hover:text-red-500 border border-transparent hover:border-red-200 hover:bg-red-50 px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition">
+                Remove
+              </button>
+            </li>
+          ))}
         </ul>
 
         {/* Empty state */}
-        {/* Uncomment when task list is empty:
-        <div className="px-6 py-10 text-center text-sm text-zinc-400">
-          No tasks yet — add one above.
-        </div> */}
+
+        {project.tasks.length == 0 && (
+          <div className="px-6 py-10 text-center text-sm text-zinc-400">
+            No tasks yet — add one above.
+          </div>
+        )}
+
       </div>
 
     </div>
