@@ -30,6 +30,7 @@ export function ProjectsProvier({ children }) {
         const newProjectId = Date.now()
         setProjects(prevValue => [...prevValue, { id: newProjectId, ...newProject, tasks: [] }])
         console.log('Project added')
+        return newProjectId        
     }
 
     function addTaks(projectId, newTask) {
@@ -88,10 +89,29 @@ export function ProjectsProvier({ children }) {
     }
 
 
+    function updateProject(projectId, updateData){
+      // search the project and update descripiton adn name 
+      const { name, description} = updateData
+      setProjects( prevValue => (
+        prevValue.map( currentProject => {
+          // early return 
+          if(currentProject.id != projectId){
+            return currentProject
+          }
+          // update the data
+          return {
+            ...currentProject, // do this ... because need to add the id and the tasks
+            name: name,
+            description: description
+          }
+        })
+      ))
+    }
+
 
     return (
         <>
-            <ProjectsContext value={{ projects, addProject, addTaks, completeTaks, deleteTask, deleteProject }}>
+            <ProjectsContext value={{ projects, addProject, addTaks, completeTaks, deleteTask, deleteProject,updateProject }}>
                 {children}
             </ProjectsContext>
         </>

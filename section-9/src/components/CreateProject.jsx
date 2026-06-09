@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useProjects } from "../context/ProjectsContext"
+import { useNavigate } from "react-router"
 
 
 export default function CreateProject() {
@@ -8,6 +9,7 @@ export default function CreateProject() {
   const [projectDescription, setProjectDescription] = useState("")
   const {addProject} = useProjects()
 
+  let navigate = useNavigate();
 
   function clearForm(){
     setProjectDescription("")
@@ -18,15 +20,15 @@ export default function CreateProject() {
     e.preventDefault()
 
     // Verify that fiels are not empty 
-    addProject({
+    const newProjectId = addProject({
       name: projectName,
       description: projectDescription
     })
-
     // Save the data
     // clena the inputs & show success message
     clearForm()
-
+    // Redirect to the project that I already creat
+    navigate(`/project/${newProjectId}`)
   }
 
 
