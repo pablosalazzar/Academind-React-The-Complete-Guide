@@ -7,21 +7,18 @@ export default function ViewProject() {
   let { projectId } = useParams()
 
   const [isEditMode, setIsEditMode] = useState(false)
-
   const [task, setTask] = useState("")
 
   const { projects, addTaks, completeTaks, deleteTask, deleteProject, updateProject } = useProjects()
   const project = projects.find(currentProject => currentProject.id == projectId)
 
-
   const [editedName, setEditedName] = useState(project.name)
   const [editedDescription, setEditedDescription] = useState(project.description)
 
-  useEffect( ()=> {
+  useEffect(() => {
     setEditedName(project.name)
     setEditedDescription(project.description)
-  },[projectId])
-
+  }, [projectId])
 
   function handleAddTaks() {
     addTaks(projectId, task)
@@ -49,11 +46,9 @@ export default function ViewProject() {
       updateProject(projectId, { name: editedName, description: editedDescription })
       setIsEditMode(false)
       // clear the inputs 
-    }else{
+    } else {
       setIsEditMode(true)
     }
-
-    
   }
 
   return (
@@ -77,9 +72,6 @@ export default function ViewProject() {
               <p>
                 <textarea value={project.editedDescription} onChange={e => setEditedDescription(e.target.value)}></textarea>
               </p></>}
-
-
-
           </div>
           <button onClick={handleDeleteProject} className="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 active:scale-95 transition">
             Delete project
@@ -87,13 +79,7 @@ export default function ViewProject() {
 
           <button onClick={handleEditProject} className="px-4 py-2 text-sm font-medium text-yellow-600 border border-red-200 rounded-lg hover:bg-red-50 active:scale-95 transition">
             {isEditMode ? 'Update project' : 'Edit Projet'}
-
-
           </button>
-
-
-
-
         </div>
 
         {/* Divider */}
