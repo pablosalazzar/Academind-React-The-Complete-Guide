@@ -8,7 +8,8 @@ function App() {
 
   const [projects, setProjects] = useState({
     currentProject: undefined,
-    list: []
+    list: [],
+    tasks:[]
   })
 
   function handleAddProject(){
@@ -51,16 +52,25 @@ function App() {
     ))
   }
 
+  function handleDeleteProject(projectId){
+    setProjects(prevVaue=>(
+      {
+        ...prevVaue,
+        currentProject: undefined,
+        list: prevVaue.list.filter(project => project.id !== projectId) 
+      }
+    ))
+  }
 
   let content
   const selectedProject = projects.list.find( project => project.id === projects.currentProject)
   if(projects.currentProject === undefined){
-    content = <NoProjectSelected onAddProject={handleAddProject}/>
+    content = <NoProjectSelected onAddProject={handleAddProject} onDeleteProject={handleDeleteProject}/>
   }else if(projects.currentProject === null){
     content= <NewProject onAddProject={handleAddProjectList} onCancel={handleCancel}/>
   }else{
     // need to show the project
-    content = <SelectedProject project={selectedProject} />
+    content = <SelectedProject project={selectedProject} onDeleteProject={handleDeleteProject} />
   }
 
   return (
