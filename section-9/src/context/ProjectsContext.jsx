@@ -120,7 +120,7 @@ export function ProjectsProvier({ children }) {
 
 }
 
-// Creating my onw hook 
+// Creating my onw hook, so i can start getting the functions like add project add task and more
 export function useProjects() {
     return useContext(ProjectsContext)
 }
