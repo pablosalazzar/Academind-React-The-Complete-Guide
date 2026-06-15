@@ -62,15 +62,42 @@ function App() {
     ))
   }
 
+
+  function handleSaveTask(taskName){
+    setProjects(prevValue => (
+      {...prevValue,
+        tasks: [ ...prevValue.tasks, {id: Math.random(), name: taskName, projectId: prevValue.currentProject}]
+      }
+    ))
+  }
+
+  function handleDeleteTask(taskId){
+    //
+    setProjects(prevValue=> (
+      {
+        ...prevValue,
+        tasks: prevValue.tasks.filter( task=> task.id !== taskId)
+      }
+    ))
+  }
+
   let content
   const selectedProject = projects.list.find( project => project.id === projects.currentProject)
+  const currentTasks = projects.tasks.filter( task => task.projectId === projects.currentProject )
+
   if(projects.currentProject === undefined){
     content = <NoProjectSelected onAddProject={handleAddProject} onDeleteProject={handleDeleteProject}/>
   }else if(projects.currentProject === null){
     content= <NewProject onAddProject={handleAddProjectList} onCancel={handleCancel}/>
   }else{
     // need to show the project
-    content = <SelectedProject project={selectedProject} onDeleteProject={handleDeleteProject} />
+    content = <SelectedProject
+     project={selectedProject}
+    onDeleteProject={handleDeleteProject}
+    onSaveTask={handleSaveTask}
+    tasks={currentTasks}
+    onDeleteTask={handleDeleteTask}
+       />
   }
 
   return (
