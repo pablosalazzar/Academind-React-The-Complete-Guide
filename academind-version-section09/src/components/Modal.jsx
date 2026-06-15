@@ -14,12 +14,16 @@ export default function Modal({ ref, onCloseLabel, children }) {
         }
     })
 
+    function handleCloseModal(){
+        dialogRef.current.close()
+    }
+
     return createPortal(
         <dialog ref={dialogRef} className='backdrop:bg-stone-900/90 p-4 rounded-md shadow-md'>
 
             {children}
           <form action="dialog" className='mt-4 text-right'>
-            <Button>{onCloseLabel}</Button>
+            <Button onClick={handleCloseModal} type="button">{onCloseLabel}</Button>
           </form>
 
         </dialog>,
