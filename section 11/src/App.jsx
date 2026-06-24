@@ -7,11 +7,16 @@ import DeleteConfirmation from './components/DeleteConfirmation.jsx';
 import logoImg from './assets/logo.png';
 import { sortPlacesByDistance } from './loc.js'
 
+
+const storedIds = JSON.parse(localStorage.getItem('selectedPlaces')) || []
+const selectedObjects = storedIds.map(id =>
+  AVAILABLE_PLACES.find(place => place.id === id)
+)
+
 function App() {
   const modal = useRef();
   const selectedPlace = useRef();
-  const [pickedPlaces, setPickedPlaces] = useState([]);
-
+  const [pickedPlaces, setPickedPlaces] = useState(selectedObjects);
   const [availablePlaces, setAvailablePlaces] = useState([])
 
   useEffect(() => {
@@ -23,7 +28,6 @@ function App() {
         position.coords.longitude
       )
       setAvailablePlaces(sortedPlaces)
-      console.log(availablePlaces)
     });
   }, [])
 
@@ -44,6 +48,13 @@ function App() {
       const place = AVAILABLE_PLACES.find((place) => place.id === id);
       return [place, ...prevPickedPlaces];
     });
+
+    // use the local storage to save data in the browser: 
+    const storedIds = JSON.parse(localStorage.getItem('selectedPlaces')) || []
+    if (storedIds.indexOf(id) === -1) {
+      localStorage.setItem('selectedPlaces', JSON.stringify([id, ...storedIds]))
+    }
+
   }
 
   function handleRemovePlace() {
@@ -51,6 +62,13 @@ function App() {
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
     );
     modal.current.close();
+
+    // get the current elements
+    const storedIds = JSON.parse(localStorage.getItem('selectedPlaces'))
+    // remove the element
+    const filterData = storedIds.filter(place => place !== selectedPlace.current)
+    // save the data 
+    localStorage.setItem('selectedPlaces', JSON.stringify(filterData))
   }
 
   return (
