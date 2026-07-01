@@ -1,24 +1,49 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ProgressBar from "./ProgressBar";
 
-export default function DeleteConfirmation({ onConfirm, onCancel,isModalOpen }) {
+const TIMER = 3000
+
+export default function DeleteConfirmation({ onConfirm, onCancel, isModalOpen }) {
+  const [remainingtime, setRemainingtime] = useState(TIMER)
+
+  useEffect(() => {
+
+    //only set this inverval if the modail is open 
+    if (isModalOpen) {
+      const interval = setInterval(() => {
+        console.log('interval')
+        setRemainingtime(prevValue => prevValue - 10)
+      }, 10)
+
+      // we need to clena up the function 
+      return () => {
+        clearInterval(interval)
+      }
+    }
+    
+
+  }, [isModalOpen])
+
+
+
 
   useEffect(() => {
     console.log('inse useeffect of deleteConfimr')
 
-    if(isModalOpen){
+    if (isModalOpen) {
       console.log('modal open ')
-          const timeReference = setTimeout(() => {
-      console.log('Automatic accept')
-      onConfirm()
-    }, 4000)
+      const timeReference = setTimeout(() => {
+        console.log('Automatic accept')
+        onConfirm()
+      }, TIMER)
 
-    return()=>{
-      console.log('Cleanup timer')
-      clearTimeout(timeReference)
-    }
+      return () => {
+        console.log('Cleanup timer')
+        clearTimeout(timeReference)
+      }
     }
 
-  }, [onConfirm,isModalOpen])
+  }, [onConfirm, isModalOpen])
 
 
   return (
@@ -33,6 +58,7 @@ export default function DeleteConfirmation({ onConfirm, onCancel,isModalOpen }) 
           Yes
         </button>
       </div>
+      <ProgressBar timer={TIMER} isModalOpen={isModalOpen}/>
     </div>
   );
 }
