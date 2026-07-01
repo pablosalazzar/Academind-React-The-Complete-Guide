@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Places from './components/Places.jsx';
 import { AVAILABLE_PLACES } from './data.js';
@@ -15,21 +15,45 @@ const selectedObjects = storedIds.map(id =>
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  
+
   const selectedPlace = useRef();
   const [pickedPlaces, setPickedPlaces] = useState(selectedObjects);
   const [availablePlaces, setAvailablePlaces] = useState([])
 
   useEffect(() => {
     // This one right here its considered a side effect because its code that's note related wiht the app component 
-    navigator.geolocation.getCurrentPosition((position) => {
-      const sortedPlaces = sortPlacesByDistance(
+
+    const DUMMY_POSITION = {
+  coords: {
+    latitude: 14.6349, // Guatemala City example
+    longitude: -90.5069,
+    accuracy: 100,
+    altitude: null,
+    altitudeAccuracy: null,
+    heading: null,
+    speed: null,
+  },
+  timestamp: Date.now(),
+};
+const sortedPlaces = sortPlacesByDistance(
         AVAILABLE_PLACES,
-        position.coords.latitude,
-        position.coords.longitude
+        DUMMY_POSITION.coords.latitude,
+        DUMMY_POSITION.coords.longitude
       )
       setAvailablePlaces(sortedPlaces)
-    });
+
+//    if(!navigation.geolocation) return;
+
+    // navigator.geolocation.getCurrentPosition((position) => {
+    //   console.log('------')
+    //   console.log(position)
+    //   const sortedPlaces = sortPlacesByDistance(
+    //     AVAILABLE_PLACES,
+    //     position.coords.latitude,
+    //     position.coords.longitude
+    //   )
+    //   setAvailablePlaces(sortedPlaces)
+    // });
   }, [])
 
   function handleStartRemovePlace(id) {
@@ -58,7 +82,7 @@ function App() {
 
   }
 
-  function handleRemovePlace() {
+  const handleRemovePlace = useCallback(function handleRemovePlace() {
     setPickedPlaces((prevPickedPlaces) =>
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
     );
@@ -70,8 +94,7 @@ function App() {
     const filterData = storedIds.filter(place => place !== selectedPlace.current)
     // save the data 
     localStorage.setItem('selectedPlaces', JSON.stringify(filterData))
-  }
-
+  }, []) // any prop or state value that's inside this function.
 
 
   return (
@@ -80,6 +103,7 @@ function App() {
         <DeleteConfirmation
           onCancel={handleStopRemovePlace}
           onConfirm={handleRemovePlace}
+          isModalOpen={isModalOpen}
         />
       </Modal>
 

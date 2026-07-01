@@ -1,10 +1,13 @@
 import { useEffect } from "react";
 
-export default function DeleteConfirmation({ onConfirm, onCancel }) {
+export default function DeleteConfirmation({ onConfirm, onCancel,isModalOpen }) {
 
   useEffect(() => {
+    console.log('inse useeffect of deleteConfimr')
 
-    const timeReference = setTimeout(() => {
+    if(isModalOpen){
+      console.log('modal open ')
+          const timeReference = setTimeout(() => {
       console.log('Automatic accept')
       onConfirm()
     }, 4000)
@@ -13,7 +16,9 @@ export default function DeleteConfirmation({ onConfirm, onCancel }) {
       console.log('Cleanup timer')
       clearTimeout(timeReference)
     }
-  }, [onConfirm])
+    }
+
+  }, [onConfirm,isModalOpen])
 
 
   return (
