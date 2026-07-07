@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import QUESTIONS from '../questions'
 import quizCompletedImg from '../assets/quiz-complete.png'
+import QuestionTimer from "./QuestionTimer"
 
 
 export default function Quiz() {
@@ -8,6 +9,13 @@ export default function Quiz() {
     const [userAnswers, setUserAnswers] = useState([])
     const activeQuestionIndex = userAnswers.length
     const quizFinish = QUESTIONS.length === activeQuestionIndex
+
+    const handleSelectedAnswer = useCallback(function handleSelectedAnswer(selectedAnswer) {
+        // color the question.
+        setUserAnswers(prevValue => [...prevValue, selectedAnswer])
+    }, [])
+
+    const handleTimeExpire = useCallback(() => handleSelectedAnswer(null), [handleSelectedAnswer])
 
     if (quizFinish) {
         return (
@@ -21,15 +29,9 @@ export default function Quiz() {
     const shufleAnswers = [...QUESTIONS[activeQuestionIndex].answers]
     shufleAnswers.sort(() => Math.random() - 0.5)
 
-
-    function handleSelectedAnswer(selectedAnswer) {
-        setUserAnswers(prevValue => [...prevValue, selectedAnswer])
-    }
-
-
-
     return (
         <div id="quiz">
+            <QuestionTimer key={activeQuestionIndex} timeout={10000} onTimerExpire={handleTimeExpire} />
             <div id="question">
                 <h2> {QUESTIONS[activeQuestionIndex].text}</h2>
 
