@@ -1,18 +1,25 @@
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import QUESTIONS from '../questions'
 import quizCompletedImg from '../assets/quiz-complete.png'
 import QuestionTimer from "./QuestionTimer"
+import Answers from "./Answers"
+import Question from "./Question"
 
 
 export default function Quiz() {
 
+    // Answer state
     const [userAnswers, setUserAnswers] = useState([])
-    const activeQuestionIndex = userAnswers.length
+    //const activeQuestionIndex = userAnswers.length
+    
+    const activeQuestionIndex =userAnswers.length
     const quizFinish = QUESTIONS.length === activeQuestionIndex
 
     const handleSelectedAnswer = useCallback(function handleSelectedAnswer(selectedAnswer) {
-        // color the question.
+        
         setUserAnswers(prevValue => [...prevValue, selectedAnswer])
+        // we have to create a timer to start shoing the succeser or not 
+        
     }, [])
 
     const handleTimeExpire = useCallback(() => handleSelectedAnswer(null), [handleSelectedAnswer])
@@ -26,26 +33,14 @@ export default function Quiz() {
         )
     }
 
-    const shufleAnswers = [...QUESTIONS[activeQuestionIndex].answers]
-    shufleAnswers.sort(() => Math.random() - 0.5)
-
     return (
         <div id="quiz">
-            <QuestionTimer key={activeQuestionIndex} timeout={10000} onTimerExpire={handleTimeExpire} />
-            <div id="question">
-                <h2> {QUESTIONS[activeQuestionIndex].text}</h2>
-
-                <ul id="answers">
-                    {shufleAnswers.map(answer => {
-
-                        return (
-                            <li key={answer} className="answer">
-                                <button onClick={() => handleSelectedAnswer(answer)}>{answer}</button>
-                            </li>
-                        )
-                    })}
-                </ul>
-            </div>
+            <Question
+                key={activeQuestionIndex}
+                index={activeQuestionIndex}
+                onSelectAnswer = {handleSelectedAnswer}
+                onTimerExpire = {handleTimeExpire}
+            />
         </div>
     )
 }
