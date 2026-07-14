@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
 import IconButton from '../UI/IconButton.jsx';
 import MinusIcon from '../UI/Icons/MinusIcon.jsx';
@@ -27,35 +27,41 @@ function isPrime(number) {
   return true;
 }
 
-export default function Counter({ initialCount }) {
-  log('<Counter /> rendered', 1);
-  const initialCountIsPrime = isPrime(initialCount);
+const Counter = memo(
 
-  const [counter, setCounter] = useState(initialCount);
+  function Counter({ initialCount }) {
+    log('<Counter /> rendered', 1);
+    const initialCountIsPrime = isPrime(initialCount);
 
-  function handleDecrement() {
-    setCounter((prevCounter) => prevCounter - 1);
+    const [counter, setCounter] = useState(initialCount);
+
+    function handleDecrement() {
+      setCounter((prevCounter) => prevCounter - 1);
+    }
+
+    function handleIncrement() {
+      setCounter((prevCounter) => prevCounter + 1);
+    }
+
+    return (
+      <section className="counter">
+        <p className="counter-info">
+          The initial counter value was <strong>{initialCount}</strong>. It{' '}
+          <strong>is {initialCountIsPrime ? 'a' : 'not a'}</strong> prime number.
+        </p>
+        <p>
+          <IconButton icon={MinusIcon} onClick={handleDecrement}>
+            Decrement
+          </IconButton>
+          <CounterOutput value={counter} />
+          <IconButton icon={PlusIcon} onClick={handleIncrement}>
+            Increment
+          </IconButton>
+        </p>
+      </section>
+    );
   }
+)
 
-  function handleIncrement() {
-    setCounter((prevCounter) => prevCounter + 1);
-  }
+export default Counter
 
-  return (
-    <section className="counter">
-      <p className="counter-info">
-        The initial counter value was <strong>{initialCount}</strong>. It{' '}
-        <strong>is {initialCountIsPrime ? 'a' : 'not a'}</strong> prime number.
-      </p>
-      <p>
-        <IconButton icon={MinusIcon} onClick={handleDecrement}>
-          Decrement
-        </IconButton>
-        <CounterOutput value={counter} />
-        <IconButton icon={PlusIcon} onClick={handleIncrement}>
-          Increment
-        </IconButton>
-      </p>
-    </section>
-  );
-}
